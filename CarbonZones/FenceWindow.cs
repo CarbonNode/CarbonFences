@@ -141,8 +141,11 @@ namespace CarbonZones
             DesktopClickHook.RegisterFenceHandle(Handle);
         }
 
+        private const int WM_LBUTTONDOWN = 0x0201;
         private const int WM_RBUTTONUP = 0x0205;
+        private const int WM_RBUTTONDOWN = 0x0204;
         private const int WM_NCRBUTTONUP = 0x00A5;
+        private const int WM_NCLBUTTONDOWN = 0x00A1;
         private const int WM_MOUSEACTIVATE = 0x0021;
         private const int MA_NOACTIVATE = 3;
         protected override void WndProc(ref Message m)
@@ -184,6 +187,15 @@ namespace CarbonZones
             {
                 m.Result = IntPtr.Zero;
                 return;
+            }
+
+            // Dismiss open context menus on any mouse click (needed because
+            // ShowWithoutActivation / MA_NOACTIVATE prevents normal auto-close)
+            if (m.Msg == WM_LBUTTONDOWN || m.Msg == WM_RBUTTONDOWN
+                || m.Msg == WM_NCLBUTTONDOWN)
+            {
+                if (appContextMenu.Visible) appContextMenu.Close();
+                if (tabContextMenu.Visible) tabContextMenu.Close();
             }
 
             // Right-click context menu — handle directly for reliability
@@ -280,6 +292,20 @@ namespace CarbonZones
         private void contextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             deleteItemToolStripMenuItem.Visible = hoveringItem != null;
+            addFolderToolStripMenuItem.Visible = hoveringItem == null;
+        }
+
+        private void addFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (lockedToolStripMenuItem.Checked) return;
+            using var dialog = new FolderBrowserDialog();
+            dialog.Description = "Select a folder to add to this zone";
+            if (dialog.ShowDialog(this) == DialogResult.OK && !ActiveFiles.Contains(dialog.SelectedPath))
+            {
+                ActiveFiles.Add(dialog.SelectedPath);
+                Save();
+                Refresh();
+            }
         }
 
         private void FenceWindow_DragEnter(object sender, DragEventArgs e)
@@ -477,7 +503,22 @@ namespace CarbonZones
                             Save();
                         }
                     }
-                    // else: same tab area or content area — cancel, item stays
+                    else if (!string.IsNullOrEmpty(hoveringItem) && hoveringItem != droppedPath && Directory.Exists(hoveringItem))
+                    {
+                        // Dropped onto a folder entry — move the file into that folder on disk
+                        var destPath = Path.Combine(hoveringItem, Path.GetFileName(droppedPath));
+                        try
+                        {
+                            File.Move(droppedPath, destPath);
+                            ActiveFiles.Remove(droppedPath);
+                            Save();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Failed to move file into folder: {ex}");
+                        }
+                    }
+                    // else: same tab content area — cancel, item stays
                 }
                 else
                 {

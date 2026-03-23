@@ -35,10 +35,7 @@ namespace CarbonZones.Model
         {
             if (Type == EntryType.File)
             {
-                if (thumbnailProvider.IsSupported(Path))
-                    return thumbnailProvider.GenerateThumbnail(Path);
-                else
-                    return Icon.ExtractAssociatedIcon(Path);
+                return Icon.ExtractAssociatedIcon(Path);
             }
             else
             {
@@ -52,8 +49,8 @@ namespace CarbonZones.Model
             {
                 if (thumbnailProvider.IsSupported(Path))
                 {
-                    var icon = thumbnailProvider.GenerateThumbnail(Path);
-                    return icon?.ToBitmap();
+                    // Returns null on first call; ThumbnailProvider fires IconThumbnailLoaded when ready
+                    return thumbnailProvider.GenerateThumbnail(Path);
                 }
                 return IconUtil.GetJumboIcon(Path);
             }

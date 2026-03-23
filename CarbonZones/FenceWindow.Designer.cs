@@ -32,6 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FenceWindow));
             this.appContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.deleteItemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lockedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.minifyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -48,6 +49,7 @@
             resources.ApplyResources(this.appContextMenu, "appContextMenu");
             this.appContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.deleteItemToolStripMenuItem,
+            this.addFolderToolStripMenuItem,
             this.lockedToolStripMenuItem,
             this.minifyToolStripMenuItem,
             this.renameToolStripMenuItem,
@@ -65,7 +67,14 @@
             resources.ApplyResources(this.deleteItemToolStripMenuItem, "deleteItemToolStripMenuItem");
             this.deleteItemToolStripMenuItem.Name = "deleteItemToolStripMenuItem";
             this.deleteItemToolStripMenuItem.Click += new System.EventHandler(this.deleteItemToolStripMenuItem_Click);
-            // 
+            //
+            // addFolderToolStripMenuItem
+            //
+            this.addFolderToolStripMenuItem.Name = "addFolderToolStripMenuItem";
+            this.addFolderToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.addFolderToolStripMenuItem.Text = "Add Folder...";
+            this.addFolderToolStripMenuItem.Click += new System.EventHandler(this.addFolderToolStripMenuItem_Click);
+            //
             // lockedToolStripMenuItem
             // 
             resources.ApplyResources(this.lockedToolStripMenuItem, "lockedToolStripMenuItem");
@@ -157,6 +166,7 @@
         private System.Windows.Forms.ToolStripMenuItem minifyToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteItemToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem addFolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newFenceToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem titleSizeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem appearanceToolStripMenuItem;
